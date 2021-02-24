@@ -1,0 +1,28 @@
+{
+  "usuarios": [
+    {
+      "nome": "John Doe",
+      "cpf": "222-222-222-22",
+      "email": "example@gmail.com",
+      "endereco": {
+          "cep": 13454000,
+          "rua": "rua talvez",
+          "numero": 785,
+          "bairro": "bairro azul",
+          "cidade": "cidade eterna"
+      }
+    },
+    {
+      "nome": "Enrico",
+      "cpf": "232-111-231-12",
+      "email": "enricomamaco@gmail.com",
+      "endereco": {
+          "cep": 283183144,
+          "rua": "Rua dos cotocos",
+          "numero": 90,
+          "bairro": "Bairro boca de mel",
+          "cidade": "Cidade do carvão"
+      }
+    }
+  ]
+}
