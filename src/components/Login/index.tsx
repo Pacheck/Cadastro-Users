@@ -6,9 +6,9 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import { Container, LoginCard, LoginForm } from "./styles";
-import { validateEmail } from "./helpers/validateEmail";
-import { validatePassword } from "./helpers/validatePassword";
-import { createToastNotify } from "./helpers/createToast";
+import { validateEmail } from "../../helpers/validateEmail";
+import { validatePassword } from "../../helpers/validatePassword";
+import { createToastNotify } from "../../helpers/createToast";
 import { FormValues } from "./types";
 
 const Login = () => {
