@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
 
-import { validateCPF } from "./helpers/validateCPF";
-import { createToastNotify } from "../Login/helpers/createToast";
-import { validateEmail } from "../Login/helpers/validateEmail";
-import { validateCEP } from "./helpers/validateCEP";
-import { IEndereco, IFormValues } from "./types";
+import { validateCPF } from "../../helpers/validateCPF";
+import { createToastNotify } from "../../helpers/createToast";
+import { validateEmail } from "../../helpers/validateEmail";
+import { validateCEP } from "../../helpers/validateCEP";
+import { fetchCEP } from "../../helpers/fetchCEP";
+
+import { IEndereco, IFetchResponseData, IFormValues } from "./types";
 import Navbar from "../Navbar";
 import {
   Container,
@@ -19,6 +21,7 @@ import {
   StyledGrid,
 } from "./styles";
 import { Grid, Message } from "semantic-ui-react";
+import axios from "axios";
 
 const enderecoInitialState: IEndereco = {
   logradouro: "",
@@ -27,9 +30,13 @@ const enderecoInitialState: IEndereco = {
   bairro: "",
 };
 
+const personalInfoInitialState = {
+  cpf: "",
+  cep: "",
+};
+
 const Formulario = () => {
-  const [maskedCPF, setMaskedCPF] = useState("");
-  const [maskedCEP, setMaskedCEP] = useState("");
+  const [personalInfo, setPersonalInfo] = useState(personalInfoInitialState);
   const [isFetched, setIsFetched] = useState(false);
   const [currentFetchedCep, setCurrentFetchedCep] = useState("");
   const [endereco, setEndereco] = useState(enderecoInitialState);
@@ -37,15 +44,28 @@ const Formulario = () => {
     success: false,
     error: false,
   });
-  const { register, handleSubmit, errors } = useForm<IFormValues>();
+  const { register, handleSubmit, errors, reset } = useForm<IFormValues>();
 
   const handleValidateUserData = (data: IFormValues) => {
     try {
       console.log(data);
-      // console.log(validateCPF(data.cpf));
-      // console.log(data.email);
-      // console.log(validateEmail(data.email));
-      setFormBehavior({ error: false, success: true });
+      if (data) {
+        const { nome, cpf, email, cep, cidade, bairro, rua, numero } = data;
+        const user = {
+          id: uuidv4(),
+          nome,
+          cpf,
+          email,
+          cep,
+          endereco: { cidade, bairro, rua, numero },
+        };
+        axios.post("http://localhost:5000/usuarios", user);
+        setFormBehavior({ error: false, success: true });
+        setPersonalInfo(personalInfoInitialState);
+        handleCleanupForm();
+      } else {
+        setFormBehavior({ error: true, success: false });
+      }
     } catch (e) {
       createToastNotify("Houve um erro com seus dados!", toast.warn);
       setFormBehavior({ error: true, success: false });
@@ -53,30 +73,32 @@ const Formulario = () => {
   };
 
   const handleUpdateCPF = (e: any) => {
-    setMaskedCPF(validateCPF(e.target.value));
+    setPersonalInfo({ ...personalInfo, cpf: validateCPF(e.target.value) });
   };
 
   const handleUpdateCep = (e: any) => {
-    setMaskedCEP(validateCEP(e.target.value));
+    setPersonalInfo({ ...personalInfo, cep: validateCEP(e.target.value) });
   };
 
-  const handleFetchCep = async () => {
-    if (maskedCEP !== currentFetchedCep) {
-      try {
-        const res = await axios.get(
-          `https://viacep.com.br/ws/${maskedCEP}/json/`
-        );
-        console.log(res.data);
-        const { logradouro, localidade, complemento, bairro } = res.data;
-        setEndereco({ logradouro, localidade, complemento, bairro });
-        createToastNotify("Dados carregados!", toast.info);
-        setIsFetched(true);
-      } catch (e) {
-        createToastNotify("CEP inválido!", toast.error);
-        setEndereco(enderecoInitialState);
-      }
-    }
-    setCurrentFetchedCep(maskedCEP);
+  const handleCleanupForm = () => {
+    reset();
+    setEndereco(enderecoInitialState);
+  };
+
+  const handleFetchCEP = async () => {
+    const fetchedCEP = await fetchCEP(personalInfo.cep, currentFetchedCep);
+    const {
+      newCep,
+      logradouro,
+      localidade,
+      bairro,
+      complemento,
+      isFetched,
+    }: IFetchResponseData | any = fetchedCEP;
+
+    setEndereco({ logradouro, localidade, bairro, complemento });
+    setIsFetched(isFetched);
+    setCurrentFetchedCep(newCep);
   };
 
   const handleFormErrors = () => {
@@ -99,23 +121,12 @@ const Formulario = () => {
         onSubmit={handleSubmit(handleValidateUserData)}
       >
         <StyledGrid>
-          <Grid.Column computer={10} tablet={16} mobile={16}>
-            {/* <FieldForm
-              name="nome"
-              labelName="Nome"
-              defaultValue=""
-              ref={register({
-                required: true,
-                minLength: 10,
-                maxLength: 100,
-              })}
-            /> TESTANDO ESSE COMPONENTE ABSTRAIDO PRA EVITAR USAR O MESMO CÓDIGO VÁRIAS VEZES */}
-
+          <Grid.Column computer={10} tablet={13} mobile={13}>
             <FormField>
               <label htmlFor="nome">Nome</label>
               <InputForm
                 name="nome"
-                // autoFocus
+                autoFocus
                 defaultValue=""
                 ref={register({
                   required: true,
@@ -129,7 +140,7 @@ const Formulario = () => {
               <label htmlFor="cpf">CPF</label>
               <InputForm
                 name="cpf"
-                value={maskedCPF}
+                value={personalInfo.cpf}
                 placeholder="xxx.xxx.xxx-xx"
                 onChange={handleUpdateCPF}
                 ref={register({ required: true, minLength: 11, maxLength: 14 })}
@@ -138,7 +149,7 @@ const Formulario = () => {
 
             <StyledGroup widths={2}>
               <FormField>
-                <label htmlFor="email">E-Mail</label>
+                <label htmlFor="email">E-mail</label>
                 <InputForm
                   name="email"
                   defaultValue=""
@@ -146,22 +157,23 @@ const Formulario = () => {
                   ref={register({ required: true })}
                 />
               </FormField>
+
               <FormField>
                 <label htmlFor="cep">CEP</label>
                 <InputForm
                   name="cep"
-                  value={maskedCEP}
+                  value={personalInfo.cep}
                   placeholder="xxxxx-xxx"
                   ref={register({ required: true, minLength: 8 })}
                   maxLength={9}
                   onChange={handleUpdateCep}
-                  onBlur={handleFetchCep}
+                  onBlur={handleFetchCEP}
                 />
               </FormField>
             </StyledGroup>
           </Grid.Column>
 
-          <Grid.Column computer={10} tablet={16} mobile={16}>
+          <Grid.Column computer={10} tablet={13} mobile={13}>
             <StyledGroup widths={2}>
               <FormField>
                 <label htmlFor="rua">Rua</label>
@@ -172,6 +184,7 @@ const Formulario = () => {
                   readOnly={isFetched}
                 />
               </FormField>
+
               <FormField>
                 <label htmlFor="numero">Número</label>
                 <InputForm
@@ -181,6 +194,9 @@ const Formulario = () => {
                   readOnly={isFetched}
                 />
               </FormField>
+            </StyledGroup>
+            {/* /////////////////////   */}
+            <StyledGroup widths={2}>
               <FormField>
                 <label htmlFor="bairro">Bairro</label>
                 <InputForm
@@ -190,8 +206,9 @@ const Formulario = () => {
                   readOnly={isFetched}
                 />
               </FormField>
+
               <FormField>
-                <label htmlFor="cidade">Cidade</label>
+                <label htmlFor="cidiade">Cidade</label>
                 <InputForm
                   name="cidade"
                   value={endereco.localidade}
@@ -212,7 +229,7 @@ const Formulario = () => {
             />
             <StyledFormButton
               fluid
-              primary
+              positive
               type="submit"
               onClick={handleFormErrors}
             >

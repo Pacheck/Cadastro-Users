@@ -9,6 +9,15 @@ export interface IFormValues {
     cidade: string;
 }
 
+export interface IFetchResponseData {
+    newCep: string;
+    logradouro: string;
+    localidade: string;
+    bairro: string;
+    complemento: string;
+    isFetched: boolean;
+}
+
 export interface IEndereco {
     logradouro: string;
     localidade: string;

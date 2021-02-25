@@ -7,23 +7,27 @@ export const Container = styled.div`
     height: 100vh;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
+    background-color: lightgray
 `;
 
 export const StyledForm = styled(Form)({
-    width: '80%',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    marginBottom: '50px',
-   
+    backgroundColor: 'whitesmoke',
+    paddingTop: 60,
+    paddingBottom: 60,
+    borderRadius: 5,
+    boxShadow: '0 0 10px #82817f;',
 })
 
 export const StyledGroup = styled(FormGroup)({
 })
 
 export const StyledFormButton = styled(Button)({
-
+    height: 50,
 });
 
 export const FormField = styled(Form.Field)({
