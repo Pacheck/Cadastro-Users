@@ -1,7 +1,7 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
-import { createToastNotify } from "../Login/helpers/createToast";
+import { createToastNotify } from "../../helpers/createToast";
 
 import { Container } from "./styles";
 

@@ -7,5 +7,8 @@ export const Container = styled.div`
     justify-content: space-around;
     align-items: center;
     background-color: #444;
-    color: #ddd
+    color: #ddd;
+    position: absolute;
+    top: 0;
+
 `;
