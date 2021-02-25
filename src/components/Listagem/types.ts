@@ -1,11 +1,12 @@
 export interface IUserShape {
+    id: string;
     nome: string;
     cpf: string;
     email: string;
+    cep: string;
     endereco: {
-        cep: number;
         rua: string;
-        numero: number;
+        numero: string;
         bairro: string;
         cidade: string;
     }

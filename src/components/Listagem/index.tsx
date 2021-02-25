@@ -11,9 +11,9 @@ const Listagem = () => {
 
   useEffect(() => {
     const getDataFromAPI = async () => {
-      await Axios.get("http://localhost:5000/usuarios").then((res) =>
-        setUsers(res.data)
-      );
+      const response = await Axios.get("http://localhost:5000/usuarios");
+      setUsers(response.data);
+      console.log(response);
     };
     getDataFromAPI();
   }, []);
@@ -35,8 +35,9 @@ const Listagem = () => {
         </thead>
         <tbody>
           {users.map((user) => {
+            console.log(user.endereco);
             return (
-              <tr key={Math.random() * 999}>
+              <tr key={user.id}>
                 <td>{user.nome}</td>
                 <td>{user.cpf}</td>
                 <td>{user.email}</td>
