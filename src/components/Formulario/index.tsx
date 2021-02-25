@@ -18,7 +18,7 @@ import {
   StyledGroup,
   StyledGrid,
 } from "./styles";
-import { Grid } from "semantic-ui-react";
+import { Grid, Message } from "semantic-ui-react";
 
 const enderecoInitialState: IEndereco = {
   logradouro: "",
@@ -33,16 +33,22 @@ const Formulario = () => {
   const [isFetched, setIsFetched] = useState(false);
   const [currentFetchedCep, setCurrentFetchedCep] = useState("");
   const [endereco, setEndereco] = useState(enderecoInitialState);
+  const [formBehavior, setFormBehavior] = useState({
+    success: false,
+    error: false,
+  });
   const { register, handleSubmit, errors } = useForm<IFormValues>();
 
   const handleValidateUserData = (data: IFormValues) => {
     try {
       console.log(data);
       // console.log(validateCPF(data.cpf));
-      console.log(data.email);
-      console.log(validateEmail(data.email));
+      // console.log(data.email);
+      // console.log(validateEmail(data.email));
+      setFormBehavior({ error: false, success: true });
     } catch (e) {
       createToastNotify("Houve um erro com seus dados!", toast.warn);
+      setFormBehavior({ error: true, success: false });
     }
   };
 
@@ -60,6 +66,7 @@ const Formulario = () => {
         const res = await axios.get(
           `https://viacep.com.br/ws/${maskedCEP}/json/`
         );
+        console.log(res.data);
         const { logradouro, localidade, complemento, bairro } = res.data;
         setEndereco({ logradouro, localidade, complemento, bairro });
         createToastNotify("Dados carregados!", toast.info);
@@ -86,14 +93,29 @@ const Formulario = () => {
   return (
     <Container>
       <Navbar />
-      <StyledForm onSubmit={handleSubmit(handleValidateUserData)}>
+      <StyledForm
+        success={formBehavior.success}
+        error={formBehavior.error}
+        onSubmit={handleSubmit(handleValidateUserData)}
+      >
         <StyledGrid>
           <Grid.Column computer={10} tablet={16} mobile={16}>
+            {/* <FieldForm
+              name="nome"
+              labelName="Nome"
+              defaultValue=""
+              ref={register({
+                required: true,
+                minLength: 10,
+                maxLength: 100,
+              })}
+            /> TESTANDO ESSE COMPONENTE ABSTRAIDO PRA EVITAR USAR O MESMO CÓDIGO VÁRIAS VEZES */}
+
             <FormField>
               <label htmlFor="nome">Nome</label>
               <InputForm
                 name="nome"
-                autoFocus
+                // autoFocus
                 defaultValue=""
                 ref={register({
                   required: true,
@@ -155,7 +177,7 @@ const Formulario = () => {
                 <InputForm
                   name="numero"
                   value={endereco.complemento}
-                  ref={register({ required: true })}
+                  ref={register()}
                   readOnly={isFetched}
                 />
               </FormField>
@@ -178,7 +200,22 @@ const Formulario = () => {
                 />
               </FormField>
             </StyledGroup>
-            <StyledFormButton primary type="submit" onClick={handleFormErrors}>
+            <Message
+              success
+              header="Sucesso!"
+              content="Seus dados foram enviados."
+            />
+            <Message
+              error
+              header="Error!"
+              content="Não foi possível enviar os dados."
+            />
+            <StyledFormButton
+              fluid
+              primary
+              type="submit"
+              onClick={handleFormErrors}
+            >
               Enviar
             </StyledFormButton>
           </Grid.Column>

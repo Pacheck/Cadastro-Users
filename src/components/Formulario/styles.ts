@@ -23,8 +23,7 @@ export const StyledGroup = styled(FormGroup)({
 })
 
 export const StyledFormButton = styled(Button)({
-    width: '100%',
-    alignSelf: 'center'
+
 });
 
 export const FormField = styled(Form.Field)({
