@@ -24,8 +24,8 @@ const App = () => {
     <BrowserRouter>
       <Switch>
         <Route path="/" exact component={Login} />
-        <PrivateRoute exact path="/listagem" children={<Listagem />} />
-        <PrivateRoute exact path="/formulario" children={<Formulario />} />
+        <PrivateRoute path="/listagem" children={<Listagem />} />
+        <PrivateRoute path="/formulario/:userId?" children={<Formulario />} />
       </Switch>
       <ToastContainer />
     </BrowserRouter>
