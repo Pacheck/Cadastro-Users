@@ -1,52 +1,157 @@
 import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import Axios from "axios";
-
-import { Container, Table } from "./styles";
-import Navbar from "../Navbar";
+import {
+  Container,
+  StyledTable,
+  StyledButton,
+  StyledIcon,
+  StyledFooter,
+  StyledLoader,
+  StyledRow,
+  StyledHeaderCell,
+  StyledHeader,
+  StyledBody,
+  StyledCell,
+} from "./styles";
 
 import { IUserShape } from "./types";
+import Navbar from "../Navbar";
+import { createToastNotify } from "../../helpers/createToast";
+import { toast } from "react-toastify";
+import { Pagination } from "semantic-ui-react";
 
 const Listagem = () => {
   const [users, setUsers] = useState<IUserShape[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isChanged, setIsChanged] = useState(false);
+  const [deleted, setDeleted] = useState(false);
+  const [totalTablePages, setTotalTablePages] = useState(0);
+  const [activePage, setActivePage] = useState(1);
+  const history = useHistory();
+
+  const handleNavigateToForm = () => history.push("/formulario");
+
+  const handleDeleteUser = async (id: string) => {
+    try {
+      setIsChanged(true);
+      setDeleted(true);
+      const response = await Axios.delete(
+        `http://localhost:5000/usuarios/${id}`
+      );
+      createToastNotify("Usuário deletado com sucesso!", toast.success);
+    } catch (err) {
+      createToastNotify("Houve um erro ao tentar deletar!", toast.error);
+    }
+  };
+
+  const handlePageChange = (e: any) => {
+    console.log(e.target.value);
+    setActivePage(e.target.value);
+  };
 
   useEffect(() => {
+    console.log(activePage);
     const getDataFromAPI = async () => {
-      const response = await Axios.get("http://localhost:5000/usuarios");
+      const response = await Axios.get(
+        `http://localhost:5000/usuarios?_page=${activePage}`
+      );
+      setTotalTablePages(Math.ceil(response.data.length));
       setUsers(response.data);
+      setIsLoading(false);
+      setDeleted(false);
       console.log(response);
     };
+    setIsChanged(false);
     getDataFromAPI();
-  }, []);
-
-  console.log(users);
+  }, [isChanged, activePage]);
 
   return (
     <Container>
       <Navbar />
-      <h1>Listagem de usuários</h1>
-      <Table>
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>CPF</th>
-            <th>E-mail</th>
-            <th>Cidade</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user) => {
-            console.log(user.endereco);
-            return (
-              <tr key={user.id}>
-                <td>{user.nome}</td>
-                <td>{user.cpf}</td>
-                <td>{user.email}</td>
-                <td>{user.endereco.cidade}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </Table>
+
+      <StyledTable stackable selectable singleLine>
+        <StyledHeader>
+          <StyledRow>
+            <StyledHeaderCell>Nome</StyledHeaderCell>
+            <StyledHeaderCell>CPF</StyledHeaderCell>
+            <StyledHeaderCell>E-mail</StyledHeaderCell>
+            <StyledHeaderCell>Cidade</StyledHeaderCell>
+            <StyledHeaderCell />
+          </StyledRow>
+        </StyledHeader>
+
+        <StyledBody>
+          {users.map((user) => (
+            <StyledRow disabled={deleted} key={user.id}>
+              <StyledCell>{user.nome}</StyledCell>
+              <StyledCell>{user.cpf}</StyledCell>
+              <StyledCell>{user.email}</StyledCell>
+              <StyledCell>{user.endereco.cidade}</StyledCell>
+              <StyledCell>
+                <StyledButton
+                  icon
+                  primary
+                  labelPosition="left"
+                  size="small"
+                  onClick={() => history.push(`/formulario/${user.id}`)}
+                >
+                  <StyledIcon name="pencil" size="md" />
+                  Edit
+                </StyledButton>
+                <StyledButton
+                  icon
+                  negative
+                  labelPosition="left"
+                  size="small"
+                  onClick={() => handleDeleteUser(user.id)}
+                >
+                  <StyledIcon name="trash" size="md" />
+                  Delete
+                </StyledButton>
+              </StyledCell>
+            </StyledRow>
+          ))}
+          {isLoading && (
+            <StyledRow disabled={isLoading}>
+              <StyledCell colSpan={5}>
+                <StyledLoader
+                  size="big"
+                  active={isLoading}
+                  inline="centered"
+                  floated="center"
+                />
+              </StyledCell>
+            </StyledRow>
+          )}
+        </StyledBody>
+
+        <StyledFooter>
+          <StyledRow>
+            <StyledHeaderCell colSpan={5} verticalAlign="center">
+              <StyledButton
+                labelPosition="left"
+                size="larger"
+                positive
+                icon
+                disabled={isLoading}
+                onClick={handleNavigateToForm}
+              >
+                <StyledIcon name="user" /> Adicionar Usuário
+              </StyledButton>
+            </StyledHeaderCell>
+          </StyledRow>
+        </StyledFooter>
+      </StyledTable>
+      <Pagination
+        activePage={activePage}
+        onPageChange={handlePageChange}
+        defaultActivePage={1}
+        showEllipsis
+        showPreviousAndNextNav
+        totalPages={totalTablePages}
+      />
+      <StyledLoader active={deleted} inline="centered" />
     </Container>
   );
 };

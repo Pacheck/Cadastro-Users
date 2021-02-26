@@ -3,8 +3,8 @@ export interface IUserShape {
     nome: string;
     cpf: string;
     email: string;
-    cep: string;
     endereco: {
+        cep: string;
         rua: string;
         numero: string;
         bairro: string;
