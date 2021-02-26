@@ -1,15 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
 
-import { validateCPF } from "../../helpers/validateCPF";
-import { createToastNotify } from "../../helpers/createToast";
-import { validateEmail } from "../../helpers/validateEmail";
-import { validateCEP } from "../../helpers/validateCEP";
-import { fetchCEP } from "../../helpers/fetchCEP";
+import { Grid, Message } from "semantic-ui-react";
 
-import { IEndereco, IFetchResponseData, IFormValues } from "./types";
+import {
+  IEndereco,
+  IFetchResponseData,
+  IFormValues,
+  IUserParams,
+} from "./types";
+import { createToastNotify } from "../../helpers/createToast";
+import { validateCEP } from "../../helpers/validateCEP";
+import { validateCPF } from "../../helpers/validateCPF";
+import { fetchCEP } from "../../helpers/fetchCEP";
 import Navbar from "../Navbar";
 import {
   Container,
@@ -20,8 +27,6 @@ import {
   StyledGroup,
   StyledGrid,
 } from "./styles";
-import { Grid, Message } from "semantic-ui-react";
-import axios from "axios";
 
 const enderecoInitialState: IEndereco = {
   logradouro: "",
@@ -36,6 +41,8 @@ const personalInfoInitialState = {
 };
 
 const Formulario = () => {
+  const { userId } = useParams<IUserParams>();
+
   const [personalInfo, setPersonalInfo] = useState(personalInfoInitialState);
   const [isFetched, setIsFetched] = useState(false);
   const [currentFetchedCep, setCurrentFetchedCep] = useState("");
@@ -44,22 +51,30 @@ const Formulario = () => {
     success: false,
     error: false,
   });
-  const { register, handleSubmit, errors, reset } = useForm<IFormValues>();
+  const {
+    register,
+    handleSubmit,
+    errors,
+    reset,
+    setValue,
+  } = useForm<IFormValues>();
 
-  const handleValidateUserData = (data: IFormValues) => {
+  const handleSubmitForm = (data: IFormValues) => {
     try {
       console.log(data);
       if (data) {
         const { nome, cpf, email, cep, cidade, bairro, rua, numero } = data;
         const user = {
-          id: uuidv4(),
+          id: userId ? userId : uuidv4(),
           nome,
           cpf,
           email,
-          cep,
-          endereco: { cidade, bairro, rua, numero },
+          endereco: { cep, cidade, bairro, rua, numero },
         };
-        axios.post("http://localhost:5000/usuarios", user);
+        userId
+          ? axios.put(`http://localhost:5000/usuarios/${userId}`, user)
+          : axios.post("http://localhost:5000/usuarios", user);
+
         setFormBehavior({ error: false, success: true });
         setPersonalInfo(personalInfoInitialState);
         handleCleanupForm();
@@ -76,7 +91,12 @@ const Formulario = () => {
     setPersonalInfo({ ...personalInfo, cpf: validateCPF(e.target.value) });
   };
 
+  const handleUpdateNumero = (e: any) =>
+    setEndereco({ ...endereco, complemento: e.target.value });
+
   const handleUpdateCep = (e: any) => {
+    console.log(personalInfo.cep);
+    console.log(e.target.value);
     setPersonalInfo({ ...personalInfo, cep: validateCEP(e.target.value) });
   };
 
@@ -86,19 +106,20 @@ const Formulario = () => {
   };
 
   const handleFetchCEP = async () => {
-    const fetchedCEP = await fetchCEP(personalInfo.cep, currentFetchedCep);
-    const {
-      newCep,
-      logradouro,
-      localidade,
-      bairro,
-      complemento,
-      isFetched,
-    }: IFetchResponseData | any = fetchedCEP;
-
-    setEndereco({ logradouro, localidade, bairro, complemento });
-    setIsFetched(isFetched);
-    setCurrentFetchedCep(newCep);
+    try {
+      const fetchedCEP = await fetchCEP(personalInfo.cep, currentFetchedCep);
+      console.log(fetchedCEP);
+      const {
+        newCep,
+        logradouro,
+        localidade,
+        bairro,
+        isFetched,
+      }: IFetchResponseData | any = fetchedCEP;
+      setCurrentFetchedCep(newCep);
+      setEndereco({ ...endereco, logradouro, localidade, bairro });
+      setIsFetched(isFetched);
+    } catch (e) {}
   };
 
   const handleFormErrors = () => {
@@ -112,13 +133,33 @@ const Formulario = () => {
       createToastNotify("O campo cep é obrigatório!", toast.error);
   };
 
+  useEffect(() => {
+    const fetchUserID = async () => {
+      if (userId) {
+        const res = await axios.get(`http://localhost:5000/usuarios/${userId}`);
+        setValue("nome", res.data.nome);
+        setValue("cpf", res.data.cpf);
+        setValue("email", res.data.email);
+        setValue("cep", res.data.endereco.cep);
+        setValue("rua", res.data.endereco.rua);
+        setValue("bairro", res.data.endereco.bairro);
+        setValue("cidade", res.data.endereco.cidade);
+        setValue("numero", res.data.endereco.numero);
+        console.log(res);
+      }
+      return;
+    };
+
+    fetchUserID();
+  }, []);
+
   return (
     <Container>
       <Navbar />
       <StyledForm
         success={formBehavior.success}
         error={formBehavior.error}
-        onSubmit={handleSubmit(handleValidateUserData)}
+        onSubmit={handleSubmit(handleSubmitForm)}
       >
         <StyledGrid>
           <Grid.Column computer={10} tablet={13} mobile={13}>
@@ -190,12 +231,12 @@ const Formulario = () => {
                 <InputForm
                   name="numero"
                   value={endereco.complemento}
-                  ref={register()}
-                  readOnly={isFetched}
+                  onChange={handleUpdateNumero}
+                  ref={register({ required: true })}
                 />
               </FormField>
             </StyledGroup>
-            {/* /////////////////////   */}
+            {/*  /////////////////////   */}
             <StyledGroup widths={2}>
               <FormField>
                 <label htmlFor="bairro">Bairro</label>

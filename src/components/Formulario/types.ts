@@ -9,6 +9,10 @@ export interface IFormValues {
     cidade: string;
 }
 
+export interface IUserParams {
+    userId: string;
+}
+
 export interface IFetchResponseData {
     newCep: string;
     logradouro: string;

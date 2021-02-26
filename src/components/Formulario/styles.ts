@@ -7,9 +7,8 @@ export const Container = styled.div`
     height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    background-color: lightgray
+    background-color: lightgray;
 `;
 
 export const StyledForm = styled(Form)({
@@ -17,11 +16,12 @@ export const StyledForm = styled(Form)({
     flexDirection: 'column',
     justifyContent: 'center',
     backgroundColor: 'whitesmoke',
+    marginTop: 30,
     paddingTop: 60,
     paddingBottom: 60,
     borderRadius: 5,
     boxShadow: '0 0 10px #82817f;',
-})
+});
 
 export const StyledGroup = styled(FormGroup)({
 })
