@@ -14,8 +14,8 @@ import {
   IUserParams,
 } from "./types";
 import { createToastNotify } from "../../helpers/createToast";
-import { validateCEP } from "../../helpers/validateCEP";
-import { validateCPF } from "../../helpers/validateCPF";
+import { maskCEP } from "../../helpers/maskCEP";
+import { maskCPF } from "../../helpers/maskCPF";
 import { fetchCEP } from "../../helpers/fetchCEP";
 import Navbar from "../Navbar";
 import {
@@ -99,7 +99,7 @@ const Formulario = () => {
 
   const handleUpdateCPF = (e: any) => {
     setValue("cpf", e.target.value);
-    setPersonalInfo({ ...personalInfo, cpf: validateCPF(e.target.value) });
+    setPersonalInfo({ ...personalInfo, cpf: maskCPF(e.target.value) });
   };
 
   const handleUpdateNumero = (e: any) => {
@@ -108,8 +108,11 @@ const Formulario = () => {
   };
 
   const handleUpdateCep = (e: any) => {
-    setPersonalInfo({ ...personalInfo, cep: validateCEP(e.target.value) });
-    setValue("cep", validateCEP(e.target.value));
+    setPersonalInfo({ ...personalInfo, cep: maskCEP(e.target.value) });
+    setValue("cep", maskCEP(e.target.value));
+    if (e.target.value.length === 9) {
+      handleFetchCEP(e.target.value);
+    }
   };
 
   const handleCleanupForm = (formData: IFormValues) => {
@@ -118,9 +121,10 @@ const Formulario = () => {
     setEndereco(enderecoInitialState);
   };
 
-  const handleFetchCEP = async () => {
+  const handleFetchCEP = async (autoCompletedCEP?: string) => {
     try {
-      const fetchedCEP = await fetchCEP(personalInfo.cep, currentFetchedCep);
+      const cepToFetch = autoCompletedCEP ? autoCompletedCEP : personalInfo.cep;
+      const fetchedCEP = await fetchCEP(cepToFetch, currentFetchedCep);
       console.log(fetchedCEP);
       const {
         newCep,
@@ -226,7 +230,7 @@ const Formulario = () => {
                   ref={register({ required: true })}
                   maxLength={9}
                   onChange={handleUpdateCep}
-                  onBlur={handleFetchCEP}
+                  onBlur={() => handleFetchCEP}
                 />
               </FormField>
             </StyledGroup>
