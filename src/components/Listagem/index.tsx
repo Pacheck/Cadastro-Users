@@ -13,13 +13,13 @@ import {
   StyledHeader,
   StyledBody,
   StyledCell,
+  StyledPagination,
 } from "./styles";
 
-import { IUserShape } from "./types";
-import Navbar from "../Navbar";
 import { createToastNotify } from "../../helpers/createToast";
 import { toast } from "react-toastify";
-import { Pagination } from "semantic-ui-react";
+import Navbar from "../Navbar";
+import { IUserShape } from "./types";
 
 const Listagem = () => {
   const [users, setUsers] = useState<IUserShape[]>([]);
@@ -27,7 +27,8 @@ const Listagem = () => {
   const [activePage, setActivePage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [isChanged, setIsChanged] = useState(false);
-  const [totalTablePages, setTotalTablePages] = useState(1);
+  const [totalTablePages, setTotalTablePages] = useState(0);
+  const [loadingNewPage, setLoadingNewPage] = useState(false);
 
   const history = useHistory();
 
@@ -35,49 +36,57 @@ const Listagem = () => {
 
   const handleDeleteUser = async (id: string) => {
     try {
-      setIsChanged(true);
       setDeleted(true);
-      const response = await Axios.delete(
-        `http://localhost:5000/usuarios/${id}`
-      );
+      await Axios.delete(`http://localhost:5000/usuarios/${id}`);
       createToastNotify("Usuário deletado com sucesso!", toast.success);
+      setIsChanged(true);
     } catch (err) {
       createToastNotify("Houve um erro ao tentar deletar!", toast.error);
     }
   };
 
-  const handlePageChange = (e: any) => {
-    setActivePage(e.target.text);
+  const handlePageChange = (e: any, { activePage }: any) => {
+    setLoadingNewPage(true);
+    setActivePage(activePage);
   };
 
   const handlePopulateUsersLength = async () => {
     try {
-      const { data: databaseLength } = await Axios.get(
+      const { data: usersLength } = await Axios.get(
         "http://localhost:5000/usuarios"
       );
-
-      setTotalTablePages(Math.ceil(databaseLength.length / 5));
-      console.log(databaseLength.length);
+      setTotalTablePages(Math.ceil(usersLength.length / 5));
     } catch (ex) {
-      console.log(ex);
+      createToastNotify(
+        "Não foi possível carregar os dados do banco!",
+        toast.error
+      );
     }
   };
 
   const handlePopulateUsersFromAPI = async () => {
-    const response = await Axios.get(
-      `http://localhost:5000/usuarios?_page=${activePage}&_limit=5`
-    );
-    setTotalTablePages(Math.ceil(response.data.length));
-    setUsers(response.data);
-    setIsLoading(false);
-    setDeleted(false);
-    console.log(response);
+    try {
+      const response = await Axios.get(
+        `http://localhost:5000/usuarios?_page=${activePage}&_limit=5`
+      );
+      setDeleted(false);
+      setIsLoading(false);
+      setUsers(response.data);
+      setLoadingNewPage(false);
+    } catch (ex) {
+      createToastNotify(
+        "Não foi possível carregar mais usuários!",
+        toast.error
+      );
+      console.log(ex);
+    }
   };
 
   useEffect(() => {
     handlePopulateUsersFromAPI();
     setIsChanged(false);
-    if (totalTablePages !== 0) {
+
+    if (totalTablePages === 0) {
       handlePopulateUsersLength();
     }
   }, [isChanged, activePage]);
@@ -98,7 +107,7 @@ const Listagem = () => {
 
         <StyledBody>
           {users.map((user) => (
-            <StyledRow disabled={deleted} key={user.id}>
+            <StyledRow disabled={deleted || loadingNewPage} key={user.id}>
               <StyledCell>{user.nome}</StyledCell>
               <StyledCell>{user.cpf}</StyledCell>
               <StyledCell>{user.email}</StyledCell>
@@ -111,7 +120,7 @@ const Listagem = () => {
                   size="small"
                   onClick={() => history.push(`/formulario/${user.id}`)}
                 >
-                  <StyledIcon name="pencil" size="md" />
+                  <StyledIcon name="pencil" size="small" />
                   Edit
                 </StyledButton>
                 <StyledButton
@@ -121,7 +130,7 @@ const Listagem = () => {
                   size="small"
                   onClick={() => handleDeleteUser(user.id)}
                 >
-                  <StyledIcon name="trash" size="md" />
+                  <StyledIcon name="trash" size="small" />
                   Delete
                 </StyledButton>
               </StyledCell>
@@ -143,10 +152,13 @@ const Listagem = () => {
 
         <StyledFooter>
           <StyledRow>
-            <StyledHeaderCell colSpan={5} verticalAlign="center">
+            <StyledHeaderCell colSpan={4}>
+              <StyledLoader active={loadingNewPage || deleted} inline />
+            </StyledHeaderCell>
+            <StyledHeaderCell colSpan={2}>
               <StyledButton
                 labelPosition="left"
-                size="larger"
+                size="large"
                 positive
                 icon
                 disabled={isLoading}
@@ -158,14 +170,13 @@ const Listagem = () => {
           </StyledRow>
         </StyledFooter>
       </StyledTable>
-      <Pagination
-        showEllipsis
-        showPreviousAndNextNav
-        activePage={activePage}
-        totalPages={totalTablePages}
-        onPageChange={handlePageChange}
-      />
-      <StyledLoader active={deleted} inline="centered" />
+      {totalTablePages > 0 && (
+        <StyledPagination
+          activePage={activePage}
+          totalPages={totalTablePages}
+          onPageChange={handlePageChange}
+        />
+      )}
     </Container>
   );
 };
