@@ -40,6 +40,17 @@ const personalInfoInitialState = {
   cep: "",
 };
 
+const clearedUserData: IFormValues = {
+  nome: "",
+  cpf: "",
+  email: "",
+  cep: "",
+  bairro: "",
+  cidade: "",
+  numero: "",
+  rua: "",
+};
+
 const Formulario = () => {
   const { userId } = useParams<IUserParams>();
 
@@ -57,6 +68,7 @@ const Formulario = () => {
     errors,
     reset,
     setValue,
+    clearErrors,
   } = useForm<IFormValues>();
 
   const handleSubmitForm = (data: IFormValues) => {
@@ -77,7 +89,7 @@ const Formulario = () => {
 
         setFormBehavior({ error: false, success: true });
         setPersonalInfo(personalInfoInitialState);
-        handleCleanupForm();
+        handleCleanupForm(clearedUserData);
       } else {
         setFormBehavior({ error: true, success: false });
       }
@@ -100,8 +112,8 @@ const Formulario = () => {
     setPersonalInfo({ ...personalInfo, cep: validateCEP(e.target.value) });
   };
 
-  const handleCleanupForm = () => {
-    reset();
+  const handleCleanupForm = (formData: IFormValues) => {
+    reset({ ...formData });
     setEndereco(enderecoInitialState);
   };
 
@@ -119,6 +131,7 @@ const Formulario = () => {
       setCurrentFetchedCep(newCep);
       setEndereco({ ...endereco, logradouro, localidade, bairro });
       setIsFetched(isFetched);
+      setFormBehavior({ success: false, error: false });
     } catch (e) {}
   };
 
@@ -133,24 +146,26 @@ const Formulario = () => {
       createToastNotify("O campo cep é obrigatório!", toast.error);
   };
 
-  useEffect(() => {
-    const fetchUserID = async () => {
-      if (userId) {
-        const res = await axios.get(`http://localhost:5000/usuarios/${userId}`);
-        setValue("nome", res.data.nome);
-        setValue("cpf", res.data.cpf);
-        setValue("email", res.data.email);
-        setValue("cep", res.data.endereco.cep);
-        setValue("rua", res.data.endereco.rua);
-        setValue("bairro", res.data.endereco.bairro);
-        setValue("cidade", res.data.endereco.cidade);
-        setValue("numero", res.data.endereco.numero);
-        console.log(res);
-      }
-      return;
-    };
+  const handleFetchUserID = async () => {
+    if (userId) {
+      const res = await axios.get(`http://localhost:5000/usuarios/${userId}`);
+      reset({
+        nome: res.data.nome,
+        email: res.data.email,
+        cpf: res.data.cpf,
+        cep: res.data.endereco.cep,
+        bairro: res.data.endereco.rua,
+        rua: res.data.endereco.bairro,
+        numero: res.data.endereco.cidade,
+        cidade: res.data.endereco.numero,
+      });
+      console.log(res);
+    }
+    return;
+  };
 
-    fetchUserID();
+  useEffect(() => {
+    handleFetchUserID();
   }, []);
 
   return (
