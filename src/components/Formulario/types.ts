@@ -2,7 +2,7 @@ export interface IFormValues {
     nome: string;
     cpf: string;
     email: string;
-    cep: number;
+    cep: string;
     rua: string;
     numero: string;
     bairro: string;
