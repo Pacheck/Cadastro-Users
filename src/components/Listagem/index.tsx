@@ -39,6 +39,7 @@ const Listagem = () => {
       setDeleted(true);
       await Axios.delete(`http://localhost:5000/usuarios/${id}`);
       createToastNotify("Usuário deletado com sucesso!", toast.success);
+      handlePopulateUsersLength();
       setIsChanged(true);
     } catch (err) {
       createToastNotify("Houve um erro ao tentar deletar!", toast.error);
