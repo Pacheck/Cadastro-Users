@@ -28,5 +28,6 @@ export const fetchCEP = async (newCep: string, currentCep: string) => {
           return { newCep, isFetched, ...endereco  }  
       }
     }
+    
     throw new Error('Houve um erro com o CEP')
   };
