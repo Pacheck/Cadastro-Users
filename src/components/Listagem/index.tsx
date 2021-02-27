@@ -66,13 +66,14 @@ const Listagem = () => {
 
   const handlePopulateUsersFromAPI = async () => {
     try {
+      if (isLoading) createToastNotify("Carregando dados..", toast.info);
       const response = await Axios.get(
         `http://localhost:5000/usuarios?_page=${activePage}&_limit=5`
       );
-      setDeleted(false);
-      setIsLoading(false);
       setUsers(response.data);
+      setIsLoading(false);
       setLoadingNewPage(false);
+      setDeleted(false);
     } catch (ex) {
       createToastNotify(
         "Não foi possível carregar mais usuários!",
@@ -152,20 +153,21 @@ const Listagem = () => {
 
         <StyledFooter>
           <StyledRow>
-            <StyledHeaderCell colSpan={4}>
+            <StyledHeaderCell colSpan={2}>
               <StyledLoader active={loadingNewPage || deleted} inline />
             </StyledHeaderCell>
-            <StyledHeaderCell colSpan={2}>
-              <StyledButton
-                labelPosition="left"
-                size="large"
-                positive
-                icon
-                disabled={isLoading}
-                onClick={handleNavigateToForm}
-              >
-                <StyledIcon name="user" /> Adicionar Usuário
-              </StyledButton>
+            <StyledHeaderCell colSpan={4} style={{ paddingLeft: "7%" }}>
+              {!isLoading && (
+                <StyledButton
+                  labelPosition="left"
+                  size="large"
+                  positive
+                  icon
+                  onClick={handleNavigateToForm}
+                >
+                  <StyledIcon name="user" /> Adicionar Usuário
+                </StyledButton>
+              )}
             </StyledHeaderCell>
           </StyledRow>
         </StyledFooter>
