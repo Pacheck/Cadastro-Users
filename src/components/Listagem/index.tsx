@@ -103,7 +103,19 @@ const Listagem = () => {
             <StyledHeaderCell>CPF</StyledHeaderCell>
             <StyledHeaderCell>E-mail</StyledHeaderCell>
             <StyledHeaderCell>Cidade</StyledHeaderCell>
-            <StyledHeaderCell />
+            <StyledHeaderCell>
+              {!isLoading && (
+                <StyledButton
+                  labelPosition="left"
+                  size="large"
+                  positive
+                  icon
+                  onClick={handleNavigateToForm}
+                >
+                  <StyledIcon name="user" /> Adicionar Usuário
+                </StyledButton>
+              )}
+            </StyledHeaderCell>
           </StyledRow>
         </StyledHeader>
 
@@ -154,22 +166,10 @@ const Listagem = () => {
 
         <StyledFooter>
           <StyledRow>
-            <StyledHeaderCell colSpan={2}>
+            <StyledHeaderCell colSpan={4}>
               <StyledLoader active={loadingNewPage || deleted} inline />
             </StyledHeaderCell>
-            <StyledHeaderCell colSpan={4} style={{ paddingLeft: "7%" }}>
-              {!isLoading && (
-                <StyledButton
-                  labelPosition="left"
-                  size="large"
-                  positive
-                  icon
-                  onClick={handleNavigateToForm}
-                >
-                  <StyledIcon name="user" /> Adicionar Usuário
-                </StyledButton>
-              )}
-            </StyledHeaderCell>
+            <StyledHeaderCell colSpan={6}></StyledHeaderCell>
           </StyledRow>
         </StyledFooter>
       </StyledTable>
