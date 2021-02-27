@@ -23,11 +23,12 @@ import { Pagination } from "semantic-ui-react";
 
 const Listagem = () => {
   const [users, setUsers] = useState<IUserShape[]>([]);
+  const [deleted, setDeleted] = useState(false);
+  const [activePage, setActivePage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [isChanged, setIsChanged] = useState(false);
-  const [deleted, setDeleted] = useState(false);
-  const [totalTablePages, setTotalTablePages] = useState(0);
-  const [activePage, setActivePage] = useState(1);
+  const [totalTablePages, setTotalTablePages] = useState(1);
+
   const history = useHistory();
 
   const handleNavigateToForm = () => history.push("/formulario");
@@ -46,26 +47,40 @@ const Listagem = () => {
   };
 
   const handlePageChange = (e: any) => {
-    console.log(e.target.value);
-    setActivePage(e.target.value);
+    setActivePage(e.target.text);
+  };
+
+  const handlePopulateUsersLength = async () => {
+    try {
+      const { data: databaseLength } = await Axios.get(
+        "http://localhost:5000/usuarios"
+      );
+
+      setTotalTablePages(Math.ceil(databaseLength.length / 5));
+      console.log(databaseLength.length);
+    } catch (ex) {
+      console.log(ex);
+    }
+  };
+
+  const handlePopulateUsersFromAPI = async () => {
+    const response = await Axios.get(
+      `http://localhost:5000/usuarios?_page=${activePage}&_limit=5`
+    );
+    setTotalTablePages(Math.ceil(response.data.length));
+    setUsers(response.data);
+    setIsLoading(false);
+    setDeleted(false);
+    console.log(response);
   };
 
   useEffect(() => {
-    console.log(activePage);
-    const getDataFromAPI = async () => {
-      const response = await Axios.get(
-        `http://localhost:5000/usuarios?_page=${activePage}`
-      );
-      setTotalTablePages(Math.ceil(response.data.length));
-      setUsers(response.data);
-      setIsLoading(false);
-      setDeleted(false);
-      console.log(response);
-    };
+    handlePopulateUsersFromAPI();
     setIsChanged(false);
-    getDataFromAPI();
+    if (totalTablePages !== 0) {
+      handlePopulateUsersLength();
+    }
   }, [isChanged, activePage]);
-
   return (
     <Container>
       <Navbar />
@@ -144,12 +159,11 @@ const Listagem = () => {
         </StyledFooter>
       </StyledTable>
       <Pagination
-        activePage={activePage}
-        onPageChange={handlePageChange}
-        defaultActivePage={1}
         showEllipsis
         showPreviousAndNextNav
+        activePage={activePage}
         totalPages={totalTablePages}
+        onPageChange={handlePageChange}
       />
       <StyledLoader active={deleted} inline="centered" />
     </Container>
