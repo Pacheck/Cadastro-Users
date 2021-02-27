@@ -68,7 +68,6 @@ const Formulario = () => {
     errors,
     reset,
     setValue,
-    clearErrors,
   } = useForm<IFormValues>();
 
   const handleSubmitForm = (data: IFormValues) => {
@@ -88,7 +87,6 @@ const Formulario = () => {
           : axios.post("http://localhost:5000/usuarios", user);
 
         setFormBehavior({ error: false, success: true });
-        setPersonalInfo(personalInfoInitialState);
         handleCleanupForm(clearedUserData);
       } else {
         setFormBehavior({ error: true, success: false });
@@ -100,20 +98,23 @@ const Formulario = () => {
   };
 
   const handleUpdateCPF = (e: any) => {
+    setValue("cpf", e.target.value);
     setPersonalInfo({ ...personalInfo, cpf: validateCPF(e.target.value) });
   };
 
-  const handleUpdateNumero = (e: any) =>
-    setEndereco({ ...endereco, complemento: e.target.value });
+  const handleUpdateNumero = (e: any) => {
+    setValue("numero", e.target.value);
+    setEndereco({ ...endereco });
+  };
 
   const handleUpdateCep = (e: any) => {
-    console.log(personalInfo.cep);
-    console.log(e.target.value);
     setPersonalInfo({ ...personalInfo, cep: validateCEP(e.target.value) });
+    setValue("cep", validateCEP(e.target.value));
   };
 
   const handleCleanupForm = (formData: IFormValues) => {
     reset({ ...formData });
+    setPersonalInfo(personalInfoInitialState);
     setEndereco(enderecoInitialState);
   };
 
@@ -129,10 +130,14 @@ const Formulario = () => {
         isFetched,
       }: IFetchResponseData | any = fetchedCEP;
       setCurrentFetchedCep(newCep);
-      setEndereco({ ...endereco, logradouro, localidade, bairro });
+      setValue("rua", logradouro);
+      setValue("bairro", bairro);
+      setValue("cidade", localidade);
       setIsFetched(isFetched);
       setFormBehavior({ success: false, error: false });
-    } catch (e) {}
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const handleFormErrors = () => {
@@ -149,15 +154,15 @@ const Formulario = () => {
   const handleFetchUserID = async () => {
     if (userId) {
       const res = await axios.get(`http://localhost:5000/usuarios/${userId}`);
-      reset({
+      handleCleanupForm({
         nome: res.data.nome,
         email: res.data.email,
         cpf: res.data.cpf,
         cep: res.data.endereco.cep,
-        bairro: res.data.endereco.rua,
-        rua: res.data.endereco.bairro,
-        numero: res.data.endereco.cidade,
-        cidade: res.data.endereco.numero,
+        bairro: res.data.endereco.bairro,
+        rua: res.data.endereco.rua,
+        numero: res.data.endereco.numero,
+        cidade: res.data.endereco.cidade,
       });
       console.log(res);
     }
@@ -196,10 +201,9 @@ const Formulario = () => {
               <label htmlFor="cpf">CPF</label>
               <InputForm
                 name="cpf"
-                value={personalInfo.cpf}
                 placeholder="xxx.xxx.xxx-xx"
                 onChange={handleUpdateCPF}
-                ref={register({ required: true, minLength: 11, maxLength: 14 })}
+                ref={register({ required: true })}
               />
             </FormField>
 
@@ -218,9 +222,8 @@ const Formulario = () => {
                 <label htmlFor="cep">CEP</label>
                 <InputForm
                   name="cep"
-                  value={personalInfo.cep}
                   placeholder="xxxxx-xxx"
-                  ref={register({ required: true, minLength: 8 })}
+                  ref={register({ required: true })}
                   maxLength={9}
                   onChange={handleUpdateCep}
                   onBlur={handleFetchCEP}
@@ -235,7 +238,6 @@ const Formulario = () => {
                 <label htmlFor="rua">Rua</label>
                 <InputForm
                   name="rua"
-                  value={endereco.logradouro}
                   ref={register({ required: true })}
                   readOnly={isFetched}
                 />
@@ -245,19 +247,17 @@ const Formulario = () => {
                 <label htmlFor="numero">Número</label>
                 <InputForm
                   name="numero"
-                  value={endereco.complemento}
                   onChange={handleUpdateNumero}
                   ref={register({ required: true })}
                 />
               </FormField>
             </StyledGroup>
-            {/*  /////////////////////   */}
+
             <StyledGroup widths={2}>
               <FormField>
                 <label htmlFor="bairro">Bairro</label>
                 <InputForm
                   name="bairro"
-                  value={endereco.bairro}
                   ref={register({ required: true })}
                   readOnly={isFetched}
                 />
@@ -267,7 +267,6 @@ const Formulario = () => {
                 <label htmlFor="cidiade">Cidade</label>
                 <InputForm
                   name="cidade"
-                  value={endereco.localidade}
                   ref={register({ required: true })}
                   readOnly={isFetched}
                 />
