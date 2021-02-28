@@ -13,7 +13,7 @@ export interface UserShape {
     }
 }
 
-interface ShapedUsers {
+export interface ShapedUsers {
     title: string;
     description: string;
     image: HtmlImageProps;

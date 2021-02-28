@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
 import Axios from "axios";
 import { toast } from "react-toastify";
+import { useHistory } from "react-router-dom";
+import {
+  Header,
+  HtmlInputrops,
+  SearchResultData,
+  SearchResultsProps,
+} from "semantic-ui-react";
 import {
   Container,
   StyledTable,
@@ -15,44 +21,38 @@ import {
   StyledBody,
   StyledCell,
   StyledPagination,
+  StyledSearch,
+  StyledModal,
+  StyledModalActions,
+  StyledModalContent,
 } from "./styles";
 
-import { createToastNotify } from "../../helpers/createToast";
 import Navbar from "../Navbar";
 import { UserShape, ShapedUsers } from "./types";
-import { HtmlInputrops, Search } from "semantic-ui-react";
+import { createToastNotify } from "../../helpers/createToast";
+
+const UserInitialState = {
+  id: "",
+  nome: "",
+  cpf: "",
+  email: "",
+  endereco: {
+    cep: "",
+    rua: "",
+    numero: "",
+    bairro: "",
+    cidade: "",
+  },
+};
 
 const Listagem = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [resultUsers, setResultUsers] = useState<ShapedUsers[]>([]);
-
-  // title: "Pedro Pacheco",
-  // description: "pacheckdev@gmail.com",
-  // image: <StyledIcon name="user" size="small" />,
-  // price: "163.903.397-12",
-
-  const handleSearchChange = (e: HtmlInputrops) => {
-    setSearchTerm(e.target.value);
-
-    const filteredUsers = allUsers.filter((user) =>
-      user.nome.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    const newUsers = filteredUsers.map((user, index) => {
-      return {
-        title: user.nome,
-        description: user.email,
-        price: user.cpf,
-        image: <StyledIcon name="user" size="big" />,
-      };
-    });
-
-    setResultUsers([...newUsers]);
-    console.log(filteredUsers);
-  };
+  const [isOpen, setIsOpen] = useState(false);
+  const [modalResult, setModalResult] = useState<UserShape>(UserInitialState);
 
   const [users, setUsers] = useState<UserShape[]>([]);
   const [allUsers, setAllUsers] = useState<UserShape[]>([]);
+  const [resultUsers, setResultUsers] = useState<ShapedUsers[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [deleted, setDeleted] = useState(false);
   const [activePage, setActivePage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
@@ -69,11 +69,17 @@ const Listagem = () => {
       setDeleted(true);
       await Axios.delete(`http://localhost:5000/usuarios/${id}`);
       setIsChanged(true);
+      setIsOpen(false);
       createToastNotify("Usuário deletado com sucesso!", toast.success);
       handlePopulateUsersLength();
     } catch (err) {
       createToastNotify("Houve um erro ao tentar deletar!", toast.error);
     }
+  };
+
+  const handleEditUser = (userID: string) => {
+    history.push(`/formulario/${userID}`);
+    setIsOpen(false);
   };
 
   const handlePageChange = (e: any, { activePage }: any) => {
@@ -117,9 +123,41 @@ const Listagem = () => {
     }
   };
 
+  const handleSearchChange = (e: HtmlInputrops) => {
+    setSearchTerm(e.target.value);
+
+    const filteredUsers = allUsers.filter((user) =>
+      user.nome.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const newUsers = filteredUsers.map((user) => {
+      return {
+        title: user.nome,
+        description: user.email,
+        price: user.cpf,
+        image: <StyledIcon name="user" size="big" />,
+      };
+    });
+
+    setResultUsers([...newUsers]);
+    console.log(filteredUsers);
+  };
+
+  const handleResultSelect = (
+    e: SearchResultsProps,
+    data: SearchResultData
+  ) => {
+    setIsOpen(true);
+    const userData =
+      allUsers.find((user) => user.cpf === data.result.price) ||
+      UserInitialState;
+    setModalResult(userData);
+  };
+
   useEffect(() => {
     handlePopulateUsersFromAPI();
     setIsChanged(false);
+    setSearchTerm("");
 
     if (totalTablePages === 0) {
       handlePopulateUsersLength();
@@ -128,6 +166,64 @@ const Listagem = () => {
   return (
     <Container>
       <Navbar />
+
+      <StyledModal
+        closeIcon
+        open={isOpen}
+        onClose={() => setIsOpen(false)}
+        onOpen={() => setIsOpen(true)}
+      >
+        <Header icon="user" content="Archive Old Messages" />
+        <StyledModalContent
+          style={{ display: "flex", justifyContent: "center" }}
+        >
+          <StyledTable>
+            <StyledHeader>
+              <StyledRow>
+                <StyledHeaderCell>Nome</StyledHeaderCell>
+                <StyledHeaderCell>CPF</StyledHeaderCell>
+                <StyledHeaderCell>E-mail</StyledHeaderCell>
+                <StyledHeaderCell>Cidade</StyledHeaderCell>
+              </StyledRow>
+            </StyledHeader>
+            <StyledBody>
+              <StyledRow disabled={deleted}>
+                <StyledCell>{modalResult?.nome}</StyledCell>
+                <StyledCell>{modalResult?.cpf}</StyledCell>
+                <StyledCell>{modalResult?.email}</StyledCell>
+                <StyledCell>{modalResult?.endereco.cidade}</StyledCell>
+              </StyledRow>
+            </StyledBody>
+          </StyledTable>
+        </StyledModalContent>
+
+        <StyledModalActions>
+          <StyledButton
+            color="blue"
+            disabled={deleted}
+            onClick={() => handleEditUser(modalResult.id)}
+          >
+            <StyledIcon name="pencil" /> Editar
+          </StyledButton>
+          <StyledButton
+            color="red"
+            disabled={deleted}
+            onClick={() => handleDeleteUser(modalResult.id)}
+          >
+            <StyledIcon name="trash" /> Deletar
+          </StyledButton>
+        </StyledModalActions>
+      </StyledModal>
+
+      <StyledSearch
+        fluid
+        disabled={isLoading || deleted}
+        loading={isLoading}
+        value={searchTerm}
+        results={resultUsers}
+        onSearchChange={handleSearchChange}
+        onResultSelect={handleResultSelect}
+      />
 
       <StyledTable stackable selectable singleLine>
         <StyledHeader>
@@ -165,7 +261,7 @@ const Listagem = () => {
                   primary
                   labelPosition="left"
                   size="small"
-                  onClick={() => history.push(`/formulario/${user.id}`)}
+                  onClick={() => handleEditUser(user.id)}
                 >
                   <StyledIcon name="pencil" size="small" />
                   Edit
@@ -197,13 +293,6 @@ const Listagem = () => {
           )}
         </StyledBody>
 
-        <Search
-          fluid
-          value={searchTerm}
-          results={resultUsers}
-          onSearchChange={handleSearchChange}
-        />
-
         <StyledFooter>
           <StyledRow>
             <StyledHeaderCell colSpan={4}>
@@ -213,7 +302,6 @@ const Listagem = () => {
           </StyledRow>
         </StyledFooter>
       </StyledTable>
-
       {totalTablePages > 0 && (
         <StyledPagination
           activePage={activePage}

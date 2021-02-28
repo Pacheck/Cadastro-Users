@@ -1,211 +1,120 @@
 {
   "usuarios": [
     {
-      "id": "897eb92d-ef15-4281-9829-3c316a2c5fe4",
-      "nome": "Pedro Pacheco",
-      "cpf": "111.111.111-11",
-      "email": "motilagem@gmail.com",
+      "id": "d9bf9c61-77cd-471c-800f-332e652bfb74",
+      "nome": "Rogério Dutra",
+      "cpf": "166.231.623-91",
+      "email": "rogerio@teste.com",
       "endereco": {
-        "cep": "20241-410",
-        "cidade": "Rio de Janeiro",
-        "bairro": "Santa Teresa",
-        "rua": "Rua Gomes Lópes",
-        "numero": "1433"
-      }
-    },
-    {
-      "id": "261abf05-1967-41d3-927f-55129786c845",
-      "nome": "Alexandraaaaaaaa",
-      "cpf": "163.903.397-12",
-      "email": "asdas@gmail.com",
-      "endereco": {
-        "cep": "01001-000",
-        "cidade": "São Paulo",
-        "bairro": "Sé",
-        "rua": "Praça da Sé",
-        "numero": "1313"
-      }
-    },
-    {
-      "id": "28a78709-cdc0-461d-a84e-c93310bc87d6",
-      "nome": "Rogério Dantas",
-      "cpf": "113.314.357-33",
-      "email": "RogerioDantas@yahoo.com.br",
-      "endereco": {
-        "cep": "20241-100",
-        "cidade": "Rio de Janeiro",
-        "bairro": "Santa Teresa",
-        "rua": "Rua Gonçalves Fontes",
-        "numero": "21"
-      }
-    },
-    {
-      "id": "e79a6040-7d5c-485a-8322-e3119d3e1c79",
-      "nome": "LKKKKKKKKKKK",
-      "cpf": "000.000.000-00",
-      "email": "pacheckdev@gmail.com",
-      "endereco": {
-        "cep": "20241-400",
-        "cidade": "Rio de Janeiro",
-        "bairro": "Santa Teresa",
-        "rua": "Rua Doutor Júlio Otoni",
-        "numero": "11"
-      }
-    },
-    {
-      "id": "8db8d7f0-e34f-4087-a315-be35351204b2",
-      "nome": "asdsaasdasasdasds",
-      "cpf": "000.000.000-00",
-      "email": "asdas@gmail.com",
-      "endereco": {
-        "cep": "",
-        "cidade": "São Paulo",
-        "bairro": "Sé",
-        "rua": "Praça da Sé",
-        "numero": "1111"
-      }
-    },
-    {
-      "id": "e9f7ad4a-f808-4edd-897b-1326c11e1e8a",
-      "nome": "Enrico Yuno gay",
-      "cpf": "222.212.122-12",
-      "email": "pacheckdev@gmail.com",
-      "endereco": {
-        "cep": "20241-266",
-        "cidade": "Rio de Janeiro",
-        "bairro": "Santa Teresa",
-        "rua": "Rua Almirante Alexandrino",
-        "numero": "2222222"
-      }
-    },
-    {
-      "id": "96b0bbeb-182c-430f-bc33-dbbaa48923e9",
-      "nome": "testando de novo",
-      "cpf": "313.131.311-31",
-      "email": "aaaaa@gmail.com",
-      "endereco": {
-        "cep": "01001-000",
-        "cidade": "São Paulo",
-        "bairro": "Sé",
-        "rua": "Praça da Sé",
-        "numero": "3131"
-      }
-    },
-    {
-      "id": "599d4a7a-cdf5-43ca-905c-ba618eabf9ec",
-      "nome": "Enrico canela seca",
-      "cpf": "222.222.222-22",
-      "email": "carvoesbras@gmail.com",
-      "endereco": {
-        "cep": "20241-400",
-        "cidade": "Rio de Janeiro",
-        "bairro": "Santa Teresa",
-        "rua": "Rua Doutor Júlio Otoni",
-        "numero": "22222"
-      }
-    },
-    {
-      "id": "4f1372b6-2ddf-43a2-af30-15197117459f",
-      "nome": "asdasdsdsad",
-      "cpf": "222.222.222-22",
-      "email": "pacheckdev@gmail.com",
-      "endereco": {
-        "cep": "20241-266",
-        "cidade": "Rio de Janeiro",
-        "bairro": "Santa Teresa",
-        "rua": "Rua Almirante Alexandrino",
-        "numero": "11"
-      }
-    },
-    {
-      "id": "8a85e2e0-8711-4db2-b625-00931b949f4f",
-      "nome": "asdsaasdas",
-      "cpf": "163.903.397-12",
-      "email": "asdas@gmail.com",
-      "endereco": {
-        "cep": "01001-000",
-        "cidade": "São Paulo",
-        "bairro": "Sé",
-        "rua": "Praça da Sé",
-        "numero": "23131"
-      }
-    },
-    {
-      "id": "9b74e8ac-601f-4221-a7af-1f45b9776a9a",
-      "nome": "Gordinho sedento",
-      "cpf": "111.333.333-33",
-      "email": "gordin@gmail.com",
-      "endereco": {
-        "cep": "76810-174",
+        "cep": "76808-086",
         "cidade": "Porto Velho",
-        "bairro": "Novo Horizonte",
-        "rua": "Rua Quinze de Novembro",
-        "numero": "21"
+        "bairro": "Cohab",
+        "rua": "Avenida Jatuarana",
+        "numero": "99"
       }
     },
     {
-      "id": "1d813857-c9f7-4348-86df-388c4ceb9b5b",
-      "nome": "asdsaasdas",
-      "cpf": "000.000.000-00",
-      "email": "asdas@gmail.com",
+      "id": "c34bbc8d-e19e-4744-af8f-86b0b039a952",
+      "nome": "Fabiano Almeida",
+      "cpf": "188.237.718-11",
+      "email": "fabiano@teste.com",
       "endereco": {
-        "cep": "20241-400",
-        "cidade": "Rio de Janeiro",
-        "bairro": "Santa Teresa",
-        "rua": "Rua Doutor Júlio Otoni",
-        "numero": "12"
+        "cep": "85865-050",
+        "cidade": "Foz do Iguaçu",
+        "bairro": "Portes",
+        "rua": "Rua Cassiano RicardoVila Portes",
+        "numero": "98"
       }
     },
     {
-      "id": "8c9e5fb1-ea36-4488-9e32-ef6abde72aad",
-      "nome": "asdsaasdas",
-      "cpf": "000.000.000-00",
-      "email": "asdas@gmail.com",
+      "id": "68348c01-1cf0-4663-9fcd-9fb7736c89bc",
+      "nome": "Roberto da Silva",
+      "cpf": "133.312.391-23",
+      "email": "roberto@teste.com",
       "endereco": {
-        "cep": "01001-000",
-        "cidade": "São Paulo",
-        "bairro": "Sé",
-        "rua": "Praça da Sé",
-        "numero": "3232"
+        "cep": "69911-265",
+        "cidade": "Rio Branco",
+        "bairro": "Conjunto Castelo Branco",
+        "rua": "Rua Alberto Escócio de Faria",
+        "numero": "621"
       }
     },
     {
-      "id": "bb98d7b6-410b-4a17-8cab-f38fd58815b8",
-      "nome": "bbbbbbbbbbbbbb",
-      "cpf": "000.000.000-00",
-      "email": "asdas@gmail.com",
+      "id": "148e7537-072a-4347-8dda-5ca3df6d9870",
+      "nome": "Adalberto gonçalvez",
+      "cpf": "222.121.298-27",
+      "email": "adalberto@teste.com",
       "endereco": {
-        "cep": "01001-000",
-        "cidade": "São Paulo",
-        "bairro": "Sé",
-        "rua": "Praça da Sé",
-        "numero": "1111"
+        "cep": "30640-080",
+        "cidade": "Belo Horizonte",
+        "bairro": "Barreiro",
+        "rua": "Avenida Visconde de Ibituruna",
+        "numero": "443"
       }
     },
     {
-      "id": "8ec109e9-972d-4590-902c-84affe5e4f58",
-      "nome": "asdsaasdas",
-      "cpf": "222.211.111-11",
-      "email": "asdas@gmail.com",
+      "id": "da8bc0b6-f568-4a09-b345-47ba685ec47a",
+      "nome": "Vitória Gomes Silva",
+      "cpf": "178.292.316-79",
+      "email": "vitoria@teste.com",
       "endereco": {
-        "cep": "01001-000",
-        "cidade": "São Paulo",
-        "bairro": "Sé",
-        "rua": "Praça da Sé",
-        "numero": "22"
+        "cep": "65910-187",
+        "cidade": "Imperatriz",
+        "bairro": "Vila Lobão",
+        "rua": "Rua Projetada",
+        "numero": "66"
       }
     },
     {
-      "id": "7aa32129-1820-4342-932b-3d108b6f8481",
-      "nome": "AAAAAAAAAAAAAA",
-      "cpf": "999.999.999-99",
-      "email": "aaaaaaaaaaaaaaaaa@gmail.com",
+      "id": "1dc09507-543d-4e9b-9ebb-1c5e7424afae",
+      "nome": "Fernanda Souza",
+      "cpf": "993.289.182-22",
+      "email": "fernanda@teste.com",
       "endereco": {
-        "cep": "20241-400",
-        "cidade": "Rio de Janeiro",
-        "bairro": "Santa Teresa",
-        "rua": "Rua Doutor Júlio Otoni",
-        "numero": "22"
+        "cep": "78035-055",
+        "cidade": "Cuiabá",
+        "bairro": "Jardim Santa Isabel",
+        "rua": "Rua Cinco",
+        "numero": "34"
+      }
+    },
+    {
+      "id": "ea4b2eed-ad9c-4a59-aa97-ccbe50f75f4b",
+      "nome": "Fernanda Martins",
+      "cpf": "882.377.178-28",
+      "email": "fernandaM@teste.com",
+      "endereco": {
+        "cep": "57080-569",
+        "cidade": "Maceió",
+        "bairro": "Jardim Petrópolis",
+        "rua": "Rua Arthur Verres Domingues",
+        "numero": "122"
+      }
+    },
+    {
+      "id": "eef9b807-e0dc-4b8b-9e88-dd606c408158",
+      "nome": "Thiago de Oliveira",
+      "cpf": "929.371.278-91",
+      "email": "thiago@teste.com",
+      "endereco": {
+        "cep": "29175-631",
+        "cidade": "Serra",
+        "bairro": "das Laranjeiras",
+        "rua": "Travessa Quatorze",
+        "numero": "22123"
+      }
+    },
+    {
+      "id": "23169f62-a2d1-4ee8-ba82-6c0406632713",
+      "nome": "Rayssa de Oliveira",
+      "cpf": "737.273.878-18",
+      "email": "rayssa@teste.com",
+      "endereco": {
+        "cep": "29175-631",
+        "cidade": "Serra",
+        "bairro": "das Laranjeiras",
+        "rua": "Travessa Quatorze",
+        "numero": "342"
       }
     }
   ]
