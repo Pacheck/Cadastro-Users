@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import Axios from "axios";
+import { toast } from "react-toastify";
 import {
   Container,
   StyledTable,
@@ -17,12 +18,41 @@ import {
 } from "./styles";
 
 import { createToastNotify } from "../../helpers/createToast";
-import { toast } from "react-toastify";
 import Navbar from "../Navbar";
-import { IUserShape } from "./types";
+import { UserShape, ShapedUsers } from "./types";
+import { HtmlInputrops, Search } from "semantic-ui-react";
 
 const Listagem = () => {
-  const [users, setUsers] = useState<IUserShape[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [resultUsers, setResultUsers] = useState<ShapedUsers[]>([]);
+
+  // title: "Pedro Pacheco",
+  // description: "pacheckdev@gmail.com",
+  // image: <StyledIcon name="user" size="small" />,
+  // price: "163.903.397-12",
+
+  const handleSearchChange = (e: HtmlInputrops) => {
+    setSearchTerm(e.target.value);
+
+    const filteredUsers = allUsers.filter((user) =>
+      user.nome.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const newUsers = filteredUsers.map((user, index) => {
+      return {
+        title: user.nome,
+        description: user.email,
+        price: user.cpf,
+        image: <StyledIcon name="user" size="big" />,
+      };
+    });
+
+    setResultUsers([...newUsers]);
+    console.log(filteredUsers);
+  };
+
+  const [users, setUsers] = useState<UserShape[]>([]);
+  const [allUsers, setAllUsers] = useState<UserShape[]>([]);
   const [deleted, setDeleted] = useState(false);
   const [activePage, setActivePage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
@@ -38,9 +68,9 @@ const Listagem = () => {
     try {
       setDeleted(true);
       await Axios.delete(`http://localhost:5000/usuarios/${id}`);
+      setIsChanged(true);
       createToastNotify("Usuário deletado com sucesso!", toast.success);
       handlePopulateUsersLength();
-      setIsChanged(true);
     } catch (err) {
       createToastNotify("Houve um erro ao tentar deletar!", toast.error);
     }
@@ -53,10 +83,11 @@ const Listagem = () => {
 
   const handlePopulateUsersLength = async () => {
     try {
-      const { data: usersLength } = await Axios.get(
-        "http://localhost:5000/usuarios"
-      );
-      setTotalTablePages(Math.ceil(usersLength.length / 5));
+      const { data } = await Axios.get("http://localhost:5000/usuarios");
+      setIsLoading(false);
+      setDeleted(false);
+      setAllUsers(data);
+      setTotalTablePages(Math.ceil(data.length / 5));
     } catch (ex) {
       createToastNotify(
         "Não foi possível carregar os dados do banco!",
@@ -72,10 +103,12 @@ const Listagem = () => {
         `http://localhost:5000/usuarios?_page=${activePage}&_limit=5`
       );
       setUsers(response.data);
-      setIsLoading(false);
+      // setIsLoading(false);
+      // setDeleted(false);
       setLoadingNewPage(false);
-      setDeleted(false);
     } catch (ex) {
+      setDeleted(false);
+      setLoadingNewPage(false);
       createToastNotify(
         "Não foi possível carregar mais usuários!",
         toast.error
@@ -164,6 +197,13 @@ const Listagem = () => {
           )}
         </StyledBody>
 
+        <Search
+          fluid
+          value={searchTerm}
+          results={resultUsers}
+          onSearchChange={handleSearchChange}
+        />
+
         <StyledFooter>
           <StyledRow>
             <StyledHeaderCell colSpan={4}>
@@ -173,10 +213,12 @@ const Listagem = () => {
           </StyledRow>
         </StyledFooter>
       </StyledTable>
+
       {totalTablePages > 0 && (
         <StyledPagination
           activePage={activePage}
           totalPages={totalTablePages}
+          disabled={loadingNewPage || deleted}
           onPageChange={handlePageChange}
         />
       )}

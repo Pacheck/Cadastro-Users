@@ -6,13 +6,6 @@ import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
 
 import { Grid, Label, Message } from "semantic-ui-react";
-
-import {
-  IEndereco,
-  IFetchResponseData,
-  IFormValues,
-  IUserParams,
-} from "./types";
 import { createToastNotify } from "../../helpers/createToast";
 import { maskCEP } from "../../helpers/maskCEP";
 import { maskCPF } from "../../helpers/maskCPF";
@@ -28,6 +21,12 @@ import {
   StyledGroup,
   StyledGrid,
 } from "./styles";
+import {
+  IEndereco,
+  IFetchResponseData,
+  IFormValues,
+  IUserParams,
+} from "./types";
 
 const enderecoInitialState: IEndereco = {
   logradouro: "",
