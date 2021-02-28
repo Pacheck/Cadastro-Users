@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
 
-import { Grid, Message } from "semantic-ui-react";
+import { Grid, Label, Message } from "semantic-ui-react";
 
 import {
   IEndereco,
@@ -16,6 +16,7 @@ import {
 import { createToastNotify } from "../../helpers/createToast";
 import { maskCEP } from "../../helpers/maskCEP";
 import { maskCPF } from "../../helpers/maskCPF";
+import { validateEmailRegex } from "../../helpers/validateEmail";
 import { fetchCEP } from "../../helpers/fetchCEP";
 import Navbar from "../Navbar";
 import {
@@ -98,7 +99,7 @@ const Formulario = () => {
   };
 
   const handleUpdateCPF = (e: any) => {
-    setValue("cpf", e.target.value);
+    setValue("cpf", maskCPF(e.target.value));
     setPersonalInfo({ ...personalInfo, cpf: maskCPF(e.target.value) });
   };
 
@@ -142,17 +143,6 @@ const Formulario = () => {
     } catch (e) {
       console.log(e);
     }
-  };
-
-  const handleFormErrors = () => {
-    if (errors.nome)
-      createToastNotify("O campo nome é obrigatório!", toast.error);
-    if (errors.cpf)
-      createToastNotify("O campo cpf é obrigatório!", toast.error);
-    if (errors.email)
-      createToastNotify("O campo e-mail é obrigatório!", toast.error);
-    if (errors.cep)
-      createToastNotify("O campo cep é obrigatório!", toast.error);
   };
 
   const handleFetchUserID = async () => {
@@ -199,6 +189,11 @@ const Formulario = () => {
                   maxLength: 100,
                 })}
               />
+              {errors.nome && (
+                <Label pointing color="red">
+                  O nome precisa ter mais de 10 dígitos!
+                </Label>
+              )}
             </FormField>
 
             <FormField>
@@ -207,8 +202,14 @@ const Formulario = () => {
                 name="cpf"
                 placeholder="xxx.xxx.xxx-xx"
                 onChange={handleUpdateCPF}
+                maxLength={14}
                 ref={register({ required: true })}
               />
+              {errors.cpf && (
+                <Label pointing color="red">
+                  Informe um cpf válido!
+                </Label>
+              )}
             </FormField>
 
             <StyledGroup widths={2}>
@@ -218,8 +219,16 @@ const Formulario = () => {
                   name="email"
                   defaultValue=""
                   placeholder="example@gmail.com"
-                  ref={register({ required: true })}
+                  ref={register({
+                    required: true,
+                    pattern: validateEmailRegex,
+                  })}
                 />
+                {errors.email && (
+                  <Label pointing color="red">
+                    Informe um e-mail válido!
+                  </Label>
+                )}
               </FormField>
 
               <FormField>
@@ -232,6 +241,11 @@ const Formulario = () => {
                   onChange={handleUpdateCep}
                   onBlur={() => handleFetchCEP}
                 />
+                {errors.nome && (
+                  <Label pointing color="red">
+                    Informe um cep válido!
+                  </Label>
+                )}
               </FormField>
             </StyledGroup>
           </Grid.Column>
@@ -254,6 +268,11 @@ const Formulario = () => {
                   onChange={handleUpdateNumero}
                   ref={register({ required: true })}
                 />
+                {errors.numero && (
+                  <Label pointing color="red">
+                    Informe um número!
+                  </Label>
+                )}
               </FormField>
             </StyledGroup>
 
@@ -286,12 +305,7 @@ const Formulario = () => {
               header="Error!"
               content="Não foi possível enviar os dados."
             />
-            <StyledFormButton
-              fluid
-              positive
-              type="submit"
-              onClick={handleFormErrors}
-            >
+            <StyledFormButton fluid positive type="submit">
               Enviar
             </StyledFormButton>
           </Grid.Column>
