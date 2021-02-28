@@ -88,6 +88,7 @@ const Formulario = () => {
 
         setFormBehavior({ error: false, success: true });
         handleCleanupForm(clearedUserData);
+        setCurrentFetchedCep("");
       } else {
         setFormBehavior({ error: true, success: false });
       }
