@@ -9,7 +9,6 @@ export const fetchCEP = async (newCep: string, currentCep: string) => {
           `https://viacep.com.br/ws/${newCep}/json/`
         );
         const { logradouro, localidade, bairro } = res.data;
-        console.log(res.data);
         const isFetched = true;
         if(res.data.erro){
           createToastNotify("Digite um CEP válido!", toast.error)

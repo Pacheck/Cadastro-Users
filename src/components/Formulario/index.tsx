@@ -72,7 +72,6 @@ const Formulario = () => {
 
   const handleSubmitForm = (data: IFormValues) => {
     try {
-      console.log(data);
       if (data) {
         const { nome, cpf, email, cep, cidade, bairro, rua, numero } = data;
         const user = {
@@ -126,7 +125,6 @@ const Formulario = () => {
     try {
       const cepToFetch = autoCompletedCEP ? autoCompletedCEP : personalInfo.cep;
       const fetchedCEP = await fetchCEP(cepToFetch, currentFetchedCep);
-      console.log(fetchedCEP);
       const {
         newCep,
         logradouro,
@@ -140,9 +138,7 @@ const Formulario = () => {
       setValue("cidade", localidade);
       setIsFetched(isFetched);
       setFormBehavior({ success: false, error: false });
-    } catch (e) {
-      console.log(e);
-    }
+    } catch (e) {}
   };
 
   const handleFetchUserID = async () => {
@@ -158,7 +154,6 @@ const Formulario = () => {
         numero: res.data.endereco.numero,
         cidade: res.data.endereco.cidade,
       });
-      console.log(res);
     }
     return;
   };

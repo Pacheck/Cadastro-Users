@@ -119,7 +119,6 @@ const Listagem = () => {
         "Não foi possível carregar mais usuários!",
         toast.error
       );
-      console.log(ex);
     }
   };
 
@@ -140,7 +139,6 @@ const Listagem = () => {
     });
 
     setResultUsers([...newUsers]);
-    console.log(filteredUsers);
   };
 
   const handleResultSelect = (

@@ -29,17 +29,10 @@ const Login = () => {
     try {
       if (validateEmail(email) && validatePassword(password)) {
         localStorage.setItem("token", uuidv4());
-
-        console.log("data was stored successfully");
-        console.log(localStorage.getItem("token"));
-
         createToastNotify("Logado com sucesso", toast.success);
-
         history.push("/listagem");
       }
-    } catch (e) {
-      console.log(e);
-    }
+    } catch (e) {}
   };
 
   return (
