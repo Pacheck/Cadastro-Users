@@ -20,12 +20,10 @@ export const StyledModalActions = styled(Modal.Actions)({});
 export const StyledSearch = styled(Search)({
     marginTop: 10,
 });
-
 export const StyledSegment = styled(Segment)({
     width: '100%',
 });
-export const StyledTable = styled(Table)({
-    
+export const StyledTable = styled(Table)({   
     maxWidth: '90%',
 })
 export const Container = styled.div`
