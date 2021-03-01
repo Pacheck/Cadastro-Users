@@ -5,17 +5,25 @@ import { v4 as uuidv4 } from "uuid";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { Container, LoginCard, LoginForm } from "./styles";
-import { validateEmail } from "../../helpers/validateEmail";
+import { validateEmail, validateEmailRegex } from "../../helpers/validateEmail";
 import { validatePassword } from "../../helpers/validatePassword";
 import { createToastNotify } from "../../helpers/createToast";
 import { FormValues } from "./types";
+
+import {
+  Container,
+  StyledButton,
+  StyledForm,
+  StyledGrid,
+  StyledGridColumn,
+} from "./styles";
+import { Icon, Input, Label } from "semantic-ui-react";
 
 const Login = () => {
   const history = useHistory();
   const { register, handleSubmit, errors } = useForm<FormValues>();
 
-  const validateForm = (data: FormValues) => {
+  const handleLoginSubmit = (data: FormValues) => {
     const { email, password } = data;
 
     try {
@@ -34,40 +42,51 @@ const Login = () => {
     }
   };
 
-  const handleFormErrors = () => {
-    if (errors.email) {
-      createToastNotify("Digite um e-mail válido.", toast.error);
-    }
-
-    if (errors.password) {
-      createToastNotify("Digite uma senha válida.", toast.error);
-    }
-  };
-
   return (
     <Container>
-      <LoginCard>
-        <LoginForm onSubmit={handleSubmit(validateForm)}>
-          <label htmlFor="email">E-mail</label>
-          <input
-            name="email"
-            autoFocus
-            defaultValue=""
-            placeholder="example@gmail.com"
-            ref={register({ required: true })}
-          />
+      <StyledForm onSubmit={handleSubmit(handleLoginSubmit)}>
+        <StyledGrid>
+          <StyledGridColumn computer={5} tablet={8} mobile={14}>
+            <StyledForm.Field>
+              <label htmlFor="email">E-mail</label>
+              <Input iconPosition="left" placeholder="E-mail" name="email">
+                <Icon name="at" />
+                <input
+                  ref={register({
+                    required: true,
+                    pattern: validateEmailRegex,
+                  })}
+                />
+              </Input>
+              {errors.email && (
+                <Label basic color="red" pointing="above">
+                  Informe um e-mail válido!
+                </Label>
+              )}
+            </StyledForm.Field>
 
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            name="password"
-            defaultValue=""
-            ref={register({ required: true })}
-          />
+            <StyledForm.Field>
+              <label htmlFor="password">Senha</label>
+              <Input iconPosition="left" placeholder="******" name="password">
+                <Icon name="key" />
+                <input
+                  ref={register({ required: true, minLength: 4 })}
+                  type="password"
+                />
+              </Input>
+              {errors.password && (
+                <Label basic color="red" pointing="above">
+                  Insira uma senha com mais de quatro dígitos!
+                </Label>
+              )}
+            </StyledForm.Field>
 
-          <input type="submit" onClick={handleFormErrors} />
-        </LoginForm>
-      </LoginCard>
+            <StyledButton primary type="submit">
+              Login
+            </StyledButton>
+          </StyledGridColumn>
+        </StyledGrid>
+      </StyledForm>
     </Container>
   );
 };
