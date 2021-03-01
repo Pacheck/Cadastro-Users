@@ -2,9 +2,13 @@ import React, { useEffect, useState } from "react";
 import Axios from "axios";
 import { toast } from "react-toastify";
 import { useHistory } from "react-router-dom";
+
+import { createToastNotify } from "../../helpers/createToast";
 import {
   Header,
   HtmlInputrops,
+  PaginationItemProps,
+  PaginationProps,
   SearchResultData,
   SearchResultsProps,
 } from "semantic-ui-react";
@@ -29,7 +33,6 @@ import {
 
 import Navbar from "../Navbar";
 import { UserShape, ShapedUsers } from "./types";
-import { createToastNotify } from "../../helpers/createToast";
 
 const UserInitialState = {
   id: "",
@@ -82,7 +85,10 @@ const Listagem = () => {
     setIsOpen(false);
   };
 
-  const handlePageChange = (e: any, { activePage }: any) => {
+  const handlePageChange = (
+    e: PaginationProps,
+    { activePage }: PaginationItemProps
+  ) => {
     setLoadingNewPage(true);
     setActivePage(activePage);
   };
@@ -109,8 +115,6 @@ const Listagem = () => {
         `http://localhost:5000/usuarios?_page=${activePage}&_limit=5`
       );
       setUsers(response.data);
-      // setIsLoading(false);
-      // setDeleted(false);
       setLoadingNewPage(false);
     } catch (ex) {
       setDeleted(false);
@@ -138,7 +142,7 @@ const Listagem = () => {
       };
     });
 
-    setResultUsers([...newUsers]);
+    setResultUsers(newUsers);
   };
 
   const handleResultSelect = (
@@ -161,6 +165,7 @@ const Listagem = () => {
       handlePopulateUsersLength();
     }
   }, [isChanged, activePage]);
+
   return (
     <Container>
       <Navbar />
@@ -171,7 +176,7 @@ const Listagem = () => {
         onClose={() => setIsOpen(false)}
         onOpen={() => setIsOpen(true)}
       >
-        <Header icon="user" content="Archive Old Messages" />
+        <Header icon="user" content="Detalhes do usuário" />
         <StyledModalContent
           style={{ display: "flex", justifyContent: "center" }}
         >

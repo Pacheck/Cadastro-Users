@@ -18,7 +18,7 @@ export const StyledModal = styled(Modal)({});
 export const StyledModalContent = styled(Modal.Content)({});
 export const StyledModalActions = styled(Modal.Actions)({});
 export const StyledSearch = styled(Search)({
-    marginTop: 10
+    marginTop: 10,
 });
 
 export const StyledSegment = styled(Segment)({
