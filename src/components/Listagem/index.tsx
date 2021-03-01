@@ -232,7 +232,9 @@ const Listagem = () => {
             <StyledHeaderCell>CPF</StyledHeaderCell>
             <StyledHeaderCell>E-mail</StyledHeaderCell>
             <StyledHeaderCell>Cidade</StyledHeaderCell>
-            <StyledHeaderCell>
+            <StyledHeaderCell
+              style={{ display: "flex", justifyContent: "center" }}
+            >
               {!isLoading && (
                 <StyledButton
                   labelPosition="left"
@@ -255,7 +257,7 @@ const Listagem = () => {
               <StyledCell>{user.cpf}</StyledCell>
               <StyledCell>{user.email}</StyledCell>
               <StyledCell>{user.endereco.cidade}</StyledCell>
-              <StyledCell>
+              <StyledCell style={{ display: "flex", justifyContent: "center" }}>
                 <StyledButton
                   icon
                   primary
