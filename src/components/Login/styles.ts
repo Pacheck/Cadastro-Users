@@ -5,7 +5,6 @@ export const Container = styled.div`
     background-color: #f7f7f7;
     width: 100vw;
     height: 100vh;
-
     display: flex;
     align-items: center;
     justify-content: center;
@@ -21,8 +20,6 @@ export const StyledForm = styled(Form)({
     borderRadius: 5,
     boxShadow: '0 0 5px darkgrey'
 });
-export const StyledFormField = styled(FormField)({
-});
 
 export const StyledGrid = styled(Grid)({
     display: 'flex',
@@ -30,12 +27,10 @@ export const StyledGrid = styled(Grid)({
     alignItems: 'center',
     justifyContent: 'center',
     height: 500,
-
 });
 export const StyledGridColumn = styled(Grid.Column)({
     display: 'flex',
     alignSelf: 'center'
 });
-export const InputForm = styled.input`
-`;
+export const StyledFormField = styled(FormField)({});
 export const StyledButton = styled(Button)({});
