@@ -9,6 +9,7 @@ import { validateEmail, validateEmailRegex } from "../../helpers/validateEmail";
 import { validatePassword } from "../../helpers/validatePassword";
 import { createToastNotify } from "../../helpers/createToast";
 import { FormValues } from "./types";
+import { Icon, Input, Label } from "semantic-ui-react";
 
 import {
   Container,
@@ -17,7 +18,6 @@ import {
   StyledGrid,
   StyledGridColumn,
 } from "./styles";
-import { Icon, Input, Label } from "semantic-ui-react";
 
 const Login = () => {
   const history = useHistory();
